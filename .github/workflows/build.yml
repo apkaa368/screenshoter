@@ -5,6 +5,9 @@ on:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -35,10 +38,17 @@ jobs:
         pip install pyinstaller
         
     - name: Build with PyInstaller
-      run: pyinstaller --onefile main.py --name screenshoter
+      run: pyinstaller --onefile main.py --name screenshoter-${{ matrix.name }}
       
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: screenshoter-${{ matrix.name }}
         path: dist/*
+        
+    - name: Publish to GitHub Releases
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: "latest"
+        name: "Najnowsza wersja (Auto-Release)"
+        files: dist/screenshoter-${{ matrix.name }}*
