@@ -35,10 +35,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install pyinstaller
+        pip install pyinstaller python-xlib ewmh
         
     - name: Build with PyInstaller
-      run: pyinstaller --onefile main.py --name screenshoter-${{ matrix.name }}
+      run: pyinstaller --onefile main.py --name screenshoter-${{ matrix.name }} --hidden-import="pynput.keyboard._xorg" --hidden-import="pynput.mouse._xorg"
       
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
