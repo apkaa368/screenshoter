@@ -9,7 +9,7 @@ import pywinctl
 FINAL_WIDTH = 1200
 FINAL_HEIGHT = 1000
 
-LOGICAL_CROP_TOP = 42 
+LOGICAL_CROP_TOP = 36
 
 WINDOW_LOGICAL_WIDTH = FINAL_WIDTH
 WINDOW_LOGICAL_HEIGHT = FINAL_HEIGHT + LOGICAL_CROP_TOP
@@ -38,9 +38,9 @@ def get_frontmost_app_and_resize():
         if not is_browser:
             return None
             
-        win.moveTo(100, 100)
+        # Samo skalowanie (bez moveTo, które dodawało systemowe opóźnienie)
         win.resizeTo(WINDOW_LOGICAL_WIDTH, WINDOW_LOGICAL_HEIGHT)
-        time.sleep(0.5) 
+        time.sleep(0.15) 
         
         box = win.box
         return {
@@ -78,6 +78,7 @@ def take_screenshot(bounds):
         
         final_img.save(final_path)
         print(f"Saved: {final_path}")
+        play_success_sound()
         
     except Exception as e:
         print(f"Error taking screenshot: {e}")
@@ -92,11 +93,21 @@ def play_sound():
     else:
         os.system("afplay /System/Library/Sounds/Ping.aiff &")
 
+def play_success_sound():
+    if os.name == 'nt':
+        try:
+            import winsound
+            winsound.MessageBeep(winsound.MB_ICONASTERISK)
+        except:
+            pass
+    else:
+        os.system("afplay /System/Library/Sounds/Glass.aiff &")
+
 def on_click(click_x, click_y, button, pressed):
     global waiting_for_click
     if waiting_for_click and pressed:
         waiting_for_click = False
-        time.sleep(0.3)
+        time.sleep(0.05)
         
         bounds = get_frontmost_app_and_resize()
         if bounds:
