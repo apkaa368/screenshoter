@@ -38,7 +38,12 @@ jobs:
         pip install pyinstaller python-xlib ewmh
         
     - name: Build with PyInstaller
-      run: pyinstaller --onefile main.py --name screenshoter-${{ matrix.name }} --hidden-import="pynput.keyboard._xorg" --hidden-import="pynput.mouse._xorg"
+      run: pyinstaller --windowed --onefile main.py --name screenshoter-${{ matrix.name }} --hidden-import="pynput.keyboard._xorg" --hidden-import="pynput.mouse._xorg"
+      
+    - name: Compress for Release
+      run: |
+        cd dist
+        zip -r screenshoter-${{ matrix.name }}.zip *
       
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
@@ -51,4 +56,4 @@ jobs:
       with:
         tag_name: "latest"
         name: "Najnowsza wersja (Auto-Release)"
-        files: dist/screenshoter-${{ matrix.name }}*
+        files: dist/screenshoter-${{ matrix.name }}.zip
