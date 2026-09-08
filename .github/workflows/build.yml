@@ -10,7 +10,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        include:
+          - os: windows-latest
+            name: windows-64bit
+          - os: macos-13
+            name: mac-intel
+          - os: macos-14
+            name: mac-arm
+          - os: ubuntu-latest
+            name: linux-64bit
 
     steps:
     - uses: actions/checkout@v4
@@ -32,5 +40,5 @@ jobs:
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: screenshoter-executable-${{ matrix.os }}
+        name: screenshoter-${{ matrix.name }}
         path: dist/*
